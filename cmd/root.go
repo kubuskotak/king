@@ -65,13 +65,13 @@ func (r *rootOptions) runServer(_ *cobra.Command, _ []string) error {
 		infrastructure.Envs.Ports.HTTP,
 	), common.ColorGreen))
 	log.Info().Str("Stage", infrastructure.Envs.App.Environment).Msg("server running...")
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	// open-telemetry
 	var (
+		ctx, cancel   = context.WithCancel(context.Background())
 		cleanupTracer pkgInf.TracerReturnFunc
 		cleanupMetric pkgInf.MetricReturnFunc
 	)
+	defer cancel()
 	if infrastructure.Envs.Telemetry.CollectorEnable {
 		traceExp, traceErr := pkgInf.TraceExporter(ctx,
 			infrastructure.Envs.Telemetry.CollectorDebug,
@@ -124,7 +124,7 @@ func (r *rootOptions) runServer(_ *cobra.Command, _ []string) error {
 	errCh = h.Error()
 	// end http
 	stopCh := signal.SetupSignalHandler()
-	return signal.Graceful(infrastructure.Envs.Server.Timeout, stopCh, errCh, func(ctx context.Context) { // graceful shutdown
+	return signal.Graceful(infrastructure.Envs.Server.Timeout, stopCh, errCh, func(ctx context.Context) {
 		log.Info().Dur("timeout", infrastructure.Envs.Server.Timeout).Msg("Shutting down HTTP/HTTPS server")
 		// open-telemetry
 		if infrastructure.Envs.Telemetry.CollectorEnable {
@@ -144,7 +144,7 @@ func (r *rootOptions) runServer(_ *cobra.Command, _ []string) error {
 		if err := adaptor.UnSync(); err != nil {
 			log.Error().Err(err).Msg("there is failed on UnSync adapter")
 		}
-	})
+	}) // graceful shutdown
 }
 
 // Execute is the execute command for root command.
