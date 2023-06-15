@@ -36,6 +36,9 @@ type Config struct {
 		MaxIdleCons       int `yaml:"max_idle_cons" env:"MAX_IDLE_CONS" env-description:"database max idle conn"`
 		ConnMaxLifetime   int `yaml:"conn_max_lifetime" env:"CONN_MAX_LIFETIME" env-description:"database max lifetime"`
 	} `yaml:"DB"`
+	HelloSQLite struct {
+		File string `yaml:"file" env:"HELLO_SQLITE_FILE" env-description:"database file"`
+	} `yaml:"HelloSQLite"`
 }
 
 var (

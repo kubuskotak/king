@@ -1,5 +1,3 @@
-# https://taskfile.dev
-
 version: '3'
 
 includes:
@@ -8,6 +6,9 @@ dotenv:
   - .env
 
 tasks:
+  reload:
+    cmds:
+      - go run ./cmd/bin/main.go reload
   dev:
     deps:
       - go:generate

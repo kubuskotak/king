@@ -19,8 +19,8 @@ import (
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/kubuskotak/king/pkg/adapters"
+	"github.com/kubuskotak/king/pkg/api/rest"
 	"github.com/kubuskotak/king/pkg/infrastructure"
-	"github.com/kubuskotak/king/pkg/ports/rest"
 	"github.com/kubuskotak/king/pkg/version"
 )
 
@@ -49,17 +49,19 @@ func NewRootCmd() *cobra.Command {
 		&root.Path, "config-path", "d", "./", "config dir path")
 
 	// subcommands
-	cmds.AddCommand(newVersionCmd(), newMigrateCmd())
+	cmds.AddCommand(newVersionCmd(), newMigrateCmd(), newHotReloadCmd())
+
+	// initialize configuration
+	infrastructure.Configuration(
+		infrastructure.WithPath(root.Path),
+		infrastructure.WithFilename(root.Filename),
+	).Initialize()
+	pkgInf.InitializeLogger(infrastructure.Envs.App.Environment)
 
 	return cmds
 }
 
 func (r *rootOptions) runServer(_ *cobra.Command, _ []string) error {
-	infrastructure.Configuration(
-		infrastructure.WithPath(r.Path),
-		infrastructure.WithFilename(r.Filename),
-	).Initialize()
-	pkgInf.InitializeLogger(infrastructure.Envs.App.Environment)
 	fmt.Printf("%s\n", common.Colorize(fmt.Sprintf(logo,
 		version.GetVersion().VersionNumber(),
 		infrastructure.Envs.Ports.HTTP,
@@ -115,6 +117,8 @@ func (r *rootOptions) runServer(_ *cobra.Command, _ []string) error {
 	h.Handler(rest.Routes().Register(
 		func(c chi.Router) http.Handler {
 			// http register handler
+			helloHandler := rest.Hello{}
+			helloHandler.Register(c)
 			return c
 		},
 	))
