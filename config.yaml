@@ -1,0 +1,21 @@
+App:
+  environment: development
+  serviceName: king
+
+Ports:
+  grpc: 5000
+  http: 8007
+  https: 8003
+  metric: 9097
+
+Server:
+  timeout: 5s
+
+DB:
+  max_open_cons: 5
+  max_idle_cons: 1
+
+Telemetry:
+  collector_enable: true
+  collector_debug: false
+  collector_grpc_addr: localhost:4317

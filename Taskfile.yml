@@ -1,0 +1,43 @@
+# https://taskfile.dev
+
+version: '3'
+
+includes:
+
+dotenv:
+  - .env
+
+tasks:
+  dev:
+    deps:
+      - go:generate
+    cmds:
+      - go run ./cmd/bin/main.go
+
+  clean:
+    desc: clean all temp project
+    cmds:
+      - rm -rf coverage.out
+
+  lint:
+    desc: go linter
+    cmds:
+      - $GOPATH/bin/golangci-lint run ./...
+
+  test:
+    deps: [ clean ]
+    desc: code go test
+    cmds:
+      - go test -coverprofile=coverage.out ./...
+      - go tool cover -func=coverage.out
+
+  go:generate:
+    desc: go generate all
+    cmds:
+      - go mod tidy
+      - go generate ./...
+
+  git:delete:tag:
+    desc: git delete tag
+    cmds:
+      - git tag --delete <no value>

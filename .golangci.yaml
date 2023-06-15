@@ -1,0 +1,88 @@
+run:
+  go: '1.19'
+  timeout: 5m
+
+linters:
+  enable:
+    - errcheck
+    - funlen
+    - goimports
+    - revive
+    - govet
+    - staticcheck
+    - misspell
+    - gocritic
+    - gosec
+    - gosimple
+    - godot
+    - forbidigo
+
+# golangci-lint run --exclude="Rollback,logger.Sync,pgInstance.Stop"
+issues:
+  include:
+    # https://golangci-lint.run/usage/configuration/#command-line-options
+    - EXC0012
+    - EXC0013
+    - EXC0014
+    - EXC0015
+  exclude:
+    - Rollback
+    - logger.Sync
+    - pgInstance.Stop
+    - fmt.Printf
+    - fmt.Print
+
+linters-settings:
+  goimports:
+    # Put imports beginning with prefix after 3rd-party packages.
+    # It's a comma-separated list of prefixes.
+    local-prefixes: king
+  revive:
+    # Default to run all linters so that new rules in the future could automatically be added to the static check.
+    enable-all-rules: true
+    rules:
+      # The following rules are too strict and make coding harder. We do not enable them for now.
+      - name: file-header
+        disabled: true
+      - name: line-length-limit
+        disabled: true
+      - name: function-length
+        disabled: true
+      - name: max-public-structs
+        disabled: true
+      - name: function-result-limit
+        disabled: true
+      - name: banned-characters
+        disabled: true
+      - name: argument-limit
+        disabled: true
+      - name: cognitive-complexity
+        disabled: true
+      - name: cyclomatic
+        disabled: true
+      - name: confusing-results
+        disabled: true
+      - name: add-constant
+        disabled: true
+      - name: flag-parameter
+        disabled: true
+      - name: nested-structs
+        disabled: true
+      - name: import-shadowing
+        disabled: true
+      - name: early-return
+        disabled: true
+  gocritic:
+    disabled-checks:
+      - ifElseChain
+  govet:
+    settings:
+      printf: # The name of the analyzer, run `go tool vet help` to see the list of all analyzers
+        funcs: # Run `go tool vet help printf` to see the full configuration of `printf`
+          - common.Errorf
+  forbidigo:
+    forbid:
+      - 'ioutil\.ReadDir(# Please use os\.ReadDir)?'
+  funlen:
+    statements: 42 # adjustment default 40
+    lines: 92 # adjustment default 60
