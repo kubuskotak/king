@@ -22,7 +22,7 @@ func (h *Hello) Register(router chi.Router) {
 	router.Route("/hello", func(r chi.Router) {
 		r.Get("/", pkgRest.HandlerAdapter(h.HelloAll).JSON)
 
-		r.Route("/{id:^[1-9]+}", func(id chi.Router) {
+		r.Route("/{id:[0-9-]+}", func(id chi.Router) {
 			id.Get("/", pkgRest.HandlerAdapter(h.HelloGet).JSON)
 			id.Post("/", pkgRest.HandlerAdapter(h.HelloPost).JSON)
 			id.Put("/", pkgRest.HandlerAdapter(h.HelloPut).JSON)
