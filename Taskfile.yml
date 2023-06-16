@@ -1,6 +1,11 @@
+# https://taskfile.dev
+
 version: '3'
 
 includes:
+  crud:
+    dir: ./pkg/persist/crud
+    taskfile: ./pkg/persist/crud/Taskfile.yml
 
 dotenv:
   - .env
@@ -41,4 +46,4 @@ tasks:
   git:delete:tag:
     desc: git delete tag
     cmds:
-      - git tag --delete <no value>
+      - git tag --delete {{.VERSION}}

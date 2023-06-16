@@ -39,6 +39,9 @@ type Config struct {
 	HelloSQLite struct {
 		File string `yaml:"file" env:"HELLO_SQLITE_FILE" env-description:"database file"`
 	} `yaml:"HelloSQLite"`
+	CrudSQLite struct {
+		File string `yaml:"file" env:"CRUD_SQLITE_FILE" env-description:"database file"`
+	} `yaml:"CrudSQLite"`
 }
 
 var (

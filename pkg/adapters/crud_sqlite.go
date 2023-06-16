@@ -11,43 +11,43 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-var HelloSQLiteOpen = sqlEnt.Open // HelloSQLiteOpen will invoke to test case.
+var CrudSQLiteOpen = sqlEnt.Open // CrudSQLiteOpen will invoke to test case.
 
-// HelloSQLite is data of instances.
-type HelloSQLite struct {
+// CrudSQLite is data of instances.
+type CrudSQLite struct {
 	File   string `json:"file"`
 	driver *sqlEnt.Driver
 }
 
 // Open is open the connection of sqlite.
-func (h *HelloSQLite) Open() (*sqlEnt.Driver, error) {
-	if h.driver == nil {
+func (c *CrudSQLite) Open() (*sqlEnt.Driver, error) {
+	if c.driver == nil {
 		return nil, fmt.Errorf("driver was failed to connected")
 	}
-	return h.driver, nil
+	return c.driver, nil
 }
 
 // Connect is connected the connection of sqlite.
-func (h *HelloSQLite) Connect() (err error) {
-	h.driver, err = HelloSQLiteOpen(dialect.SQLite,
-		h.File)
+func (c *CrudSQLite) Connect() (err error) {
+	c.driver, err = CrudSQLiteOpen(dialect.SQLite,
+		c.File)
 	if err != nil {
-		log.Error().Err(err).Msg("HelloSQLiteOpen is failed to open")
+		log.Error().Err(err).Msg("CrudSQLiteOpen is failed to open")
 		return err
 	}
-	pool := h.driver.DB()
+	pool := c.driver.DB()
 	pool.SetMaxOpenConns(1)
 
 	return nil
 }
 
 // Disconnect is disconnect the connection of sqlite.
-func (h *HelloSQLite) Disconnect() error {
-	return h.driver.Close()
+func (c *CrudSQLite) Disconnect() error {
+	return c.driver.Close()
 }
 
-// WithHelloSQLite option function to assign on adapters.
-func WithHelloSQLite(driver Driver[*sqlEnt.Driver]) Option {
+// WithCrudSQLite option function to assign on adapters.
+func WithCrudSQLite(driver Driver[*sqlEnt.Driver]) Option {
 	return func(a *Adapter) {
 		if err := driver.Connect(); err != nil {
 			panic(err)
@@ -56,6 +56,6 @@ func WithHelloSQLite(driver Driver[*sqlEnt.Driver]) Option {
 		if err != nil {
 			panic(err)
 		}
-		a.HelloSQLite = open
+		a.CrudSQLite = open
 	}
 }

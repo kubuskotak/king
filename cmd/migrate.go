@@ -5,6 +5,8 @@ package cmd
 import (
 	"entgo.io/ent/dialect"
 	"github.com/spf13/cobra"
+
+	crudDiff "github.com/kubuskotak/king/pkg/persist/crud/diff"
 )
 
 type migrateOptions struct {
@@ -45,6 +47,9 @@ func newMigrateCmd() *cobra.Command {
 func (m *migrateOptions) Run(cmd *cobra.Command, _ []string) error {
 	switch m.Dialect {
 	case dialect.SQLite, dialect.MySQL:
+		if err := crudDiff.SchemaMigrate(m.Name, m.Dialect, m.DSN); err != nil {
+			return err
+		}
 		return nil
 	default:
 		return cmd.Usage()

@@ -3,17 +3,21 @@
 package adapters
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"strings"
 
-	"entgo.io/ent/dialect/sql"
+	sqlEnt "entgo.io/ent/dialect/sql"
 	"github.com/go-resty/resty/v2"
+	"github.com/kubuskotak/asgard/driver"
 	"github.com/rs/zerolog/log"
+
+	"github.com/kubuskotak/king/pkg/persist/crud"
 )
 
 type client interface {
-	*sql.Driver | *http.Client | *resty.Client
+	*sqlEnt.Driver | *http.Client | *resty.Client
 }
 
 // Driver - interface adapter.
@@ -25,7 +29,9 @@ type Driver[T client] interface {
 
 // Adapter components for external sources.
 type Adapter struct {
-	HelloSQLite *sql.Driver
+	HelloSQLite *sqlEnt.Driver
+	CrudPersist *crud.Database
+	CrudSQLite  *sqlEnt.Driver
 }
 
 // Option is Adapter type return func.
@@ -42,6 +48,12 @@ func (a *Adapter) Sync(opts ...Option) {
 // UnSync - release all adapter connection.
 func (a *Adapter) UnSync() error {
 	var errs []string
+	if a.CrudSQLite != nil {
+		log.Info().Msg("CrudSQLite is closed")
+		if err := a.CrudSQLite.Close(); err != nil {
+			errs = append(errs, err.Error())
+		}
+	}
 	if a.HelloSQLite != nil {
 		log.Info().Msg("HelloSQLite is closed")
 		if err := a.HelloSQLite.Close(); err != nil {
@@ -54,4 +66,8 @@ func (a *Adapter) UnSync() error {
 		return err
 	}
 	return nil
+}
+
+func init() {
+	sql.Register("sqlite3", driver.Sqlite())
 }

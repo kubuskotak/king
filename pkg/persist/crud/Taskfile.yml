@@ -1,0 +1,31 @@
+version: '3'
+
+tasks:
+  schema:
+    desc: create module ent crud schema
+    cmds:
+      - go run -mod=mod entgo.io/ent/cmd/ent new --target ./schema {{.SCHEMA}}
+
+  migrate:sqlite:
+    desc: e.g migrate:sqlite -- -n {{.MIGRATION_NAME}}
+    deps:
+      - :go:generate
+    dir: ../../..
+    cmds:
+      - go run ./cmd/bin/main.go migrate -n {{.MIGRATION_NAME}} -s {{.CRUD_SQLITE_FILE}}
+
+  migrate:mysql:
+    desc: e.g migrate:mysql -- -n {{.MIGRATION_NAME}}
+    deps:
+      - :go:generate
+    dir: ../../..
+    cmds:
+      - go run ./cmd/bin/main.go migrate  --dialect mysql -n {{.MIGRATION_NAME}} -s 'mysql://{{.MYSQL_USER}}:{{.MYSQL_PASSWORD}}@{{.MYSQL_HOST}}:{{.MYSQL_PORT}}/{{.MYSQL_DATABASE}}'
+
+  migrate:postgres:
+    desc: e.g migrate:postgres -- -n {{.MIGRATION_NAME}}
+    deps:
+      - :go:generate
+    dir: ../../..
+    cmds:
+      - go run ./cmd/bin/main.go migrate  --dialect postgres -n {{.MIGRATION_NAME}} -s 'postgres://{{.POSTGRES_USER}}:{{.POSTGRES_PASSWORD}}@{{.POSTGRES_HOST}}:{{.POSTGRES_PORT}}/{{.POSTGRES_DATABASE}}?sslmode=disable'
