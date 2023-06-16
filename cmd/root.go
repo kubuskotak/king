@@ -111,6 +111,8 @@ func (r *rootOptions) runServer(_ *cobra.Command, _ []string) error {
 	adaptor.Sync(
 		adapters.WithHelloSQLite(&adapters.HelloSQLite{
 			File: infrastructure.Envs.HelloSQLite.File}),
+		adapters.WithCrudSQLite(&adapters.CrudSQLite{
+			File: infrastructure.Envs.CrudSQLite.File}),
 	) // adapters init
 	var errCh chan error
 	/**
@@ -123,7 +125,7 @@ func (r *rootOptions) runServer(_ *cobra.Command, _ []string) error {
 		func(c chi.Router) http.Handler {
 			// http register handler
 			helloHandler := rest.Hello{
-				Database: crud.Driver(crud.WithDriver(adaptor.HelloSQLite, dialect.SQLite)),
+				Database: crud.Driver(crud.WithDriver(adaptor.CrudSQLite, dialect.SQLite)),
 			}
 			helloHandler.Register(c)
 			c.Mount("/api", c)
