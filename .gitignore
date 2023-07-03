@@ -15,6 +15,7 @@
 # vendor/
 /.vscode/
 .idea/
+.env
 bin/
 dist/
 

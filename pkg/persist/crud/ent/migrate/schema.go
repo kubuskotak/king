@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	// HellosColumns holds the columns for the "hellos" table.
-	HellosColumns = []*schema.Column{
+	// ArticlesColumns holds the columns for the "articles" table.
+	ArticlesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "title", Type: field.TypeString, Default: ""},
 		{Name: "body", Type: field.TypeString, Default: ""},
@@ -17,11 +17,11 @@ var (
 		{Name: "slug", Type: field.TypeString, Unique: true},
 		{Name: "user_id", Type: field.TypeInt, Nullable: true},
 	}
-	// HellosTable holds the schema information for the "hellos" table.
-	HellosTable = &schema.Table{
-		Name:       "hellos",
-		Columns:    HellosColumns,
-		PrimaryKey: []*schema.Column{HellosColumns[0]},
+	// ArticlesTable holds the schema information for the "articles" table.
+	ArticlesTable = &schema.Table{
+		Name:       "articles",
+		Columns:    ArticlesColumns,
+		PrimaryKey: []*schema.Column{ArticlesColumns[0]},
 	}
 	// YmirsColumns holds the columns for the "ymirs" table.
 	YmirsColumns = []*schema.Column{
@@ -36,7 +36,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		HellosTable,
+		ArticlesTable,
 		YmirsTable,
 	}
 )

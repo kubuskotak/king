@@ -1,5 +1,5 @@
 App:
-  environment: development
+  environment: staging
   serviceName: king
 
 Ports:
@@ -16,6 +16,6 @@ DB:
   max_idle_cons: 1
 
 Telemetry:
-  collector_enable: true
+  collector_enable: false
   collector_debug: false
-  collector_grpc_addr: localhost:4317
+  collector_grpc_addr: 192.168.1.122:4317

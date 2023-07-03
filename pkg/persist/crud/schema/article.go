@@ -5,13 +5,13 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Hello holds the schema definition for the Hello entity.
-type Hello struct {
+// Article holds the schema definition for the Article entity.
+type Article struct {
 	ent.Schema
 }
 
-// Fields of the Hello.
-func (Hello) Fields() []ent.Field {
+// Fields of the Article.
+func (Article) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("title").
 			NotEmpty().
@@ -30,7 +30,7 @@ func (Hello) Fields() []ent.Field {
 	}
 }
 
-// Edges of the Hello.
-func (Hello) Edges() []ent.Edge {
+// Edges of the Article.
+func (Article) Edges() []ent.Edge {
 	return nil
 }

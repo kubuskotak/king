@@ -19,10 +19,14 @@ import (
 	sqlDialect "entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/schema"
 	pkgInf "github.com/kubuskotak/asgard/infrastructure"
+	pkgTracer "github.com/kubuskotak/asgard/tracer"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"go.opentelemetry.io/otel/codes"
 
 	"github.com/kubuskotak/king/pkg/infrastructure"
 	"github.com/kubuskotak/king/pkg/persist/crud/ent"
+	_ "github.com/kubuskotak/king/pkg/persist/crud/ent/runtime"
 )
 
 var (
@@ -30,7 +34,10 @@ var (
 	ErrNotFound = errors.New("not found")
 
 	// ErrAlreadyExists is the error returned by driver if a resource ID is taken during a creation.
-	ErrAlreadyExists = errors.New("ID already exists")
+	ErrAlreadyExists = errors.New("already exists")
+
+	// ErrNotSingular is the error returned by driver if a resource is not a single.
+	ErrNotSingular = errors.New("record is not single")
 )
 
 // Database is data of instances.
@@ -66,11 +73,29 @@ func Driver(cfg ...func(database *Database)) *Database {
 	if strings.EqualFold(infrastructure.Envs.App.Environment, pkgInf.Development) {
 		driverWithDebugContext := entDialect.DebugWithContext(db.driver,
 			func(ctx context.Context, i ...any) {
-				log.Debug().Str("query", fmt.Sprintf("%v", i)).Msg("driverWithDebugContext")
+				var _, span, l = pkgTracer.StartSpanLogTrace(ctx, "SQL Operation")
+				defer span.End()
+				l.Debug().Str("query", fmt.Sprintf("%v", i)).Msg("driverWithDebugContext")
 			})
 		opts = append(opts, ent.Driver(driverWithDebugContext))
 	} else {
-		opts = append(opts, ent.Driver(db.driver))
+		var driverWithTracer = pkgTracer.EntDriverWithContext(db.driver,
+			func(ctx context.Context, level zerolog.Level, msg string, err error) {
+				var _, span, l = pkgTracer.StartSpanLogTrace(ctx, "SQL Operation")
+				switch level {
+				case zerolog.ErrorLevel:
+					span.SetStatus(codes.Error, "EntDriverWithContext logging")
+					span.RecordError(err)
+					l.Error().Err(err).Msg(msg)
+				case zerolog.InfoLevel:
+					span.SetStatus(codes.Ok, "EntDriverWithContext logging")
+					l.Info().Msg(msg)
+				default:
+					l.Debug().Err(err).Msg(msg)
+				}
+				span.End()
+			})
+		opts = append(opts, ent.Driver(driverWithTracer))
 	}
 	db.Client = ent.NewClient(opts...)
 
@@ -137,13 +162,17 @@ func (d *Database) BeginTx(ctx context.Context) (*ent.Tx, error) {
 
 // ConvertDBError set wrapper db error.
 func (*Database) ConvertDBError(t string, err error) error {
-	if ent.IsNotFound(err) {
-		return ErrNotFound
+	switch {
+	case ent.IsValidationError(err):
+		valid := err.(*ent.ValidationError)
+		return fmt.Errorf("validator failed for field: %s", valid.Name)
+	case ent.IsNotSingular(err):
+		return fmt.Errorf("%s: %v", t, ErrNotSingular)
+	case ent.IsConstraintError(err):
+		return fmt.Errorf("%s %v or %v", t, ErrAlreadyExists, err.(*ent.ConstraintError).Unwrap())
+	case ent.IsNotFound(err):
+		return fmt.Errorf("%s: %v", t, ErrNotFound)
+	default:
+		return fmt.Errorf("%s: %v", t, err)
 	}
-
-	if ent.IsConstraintError(err) {
-		return ErrAlreadyExists
-	}
-
-	return fmt.Errorf("%s: %v", t, err)
 }

@@ -12,7 +12,7 @@ tasks:
       - :go:generate
     dir: ../../..
     cmds:
-      - go run ./cmd/bin/main.go migrate -n {{.MIGRATION_NAME}} -s {{.CRUD_SQLITE_FILE}}
+      - go run ./cmd/bin/main.go migrate -n {{.MIGRATION_NAME}} -s 'sqlite://{{.CRUD_SQLITE_FILE}}'
 
   migrate:mysql:
     desc: e.g migrate:mysql -- -n {{.MIGRATION_NAME}}

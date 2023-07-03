@@ -9,16 +9,16 @@ import (
 	"github.com/kubuskotak/king/pkg/persist/crud/ent"
 )
 
-// The HelloFunc type is an adapter to allow the use of ordinary
-// function as Hello mutator.
-type HelloFunc func(context.Context, *ent.HelloMutation) (ent.Value, error)
+// The ArticleFunc type is an adapter to allow the use of ordinary
+// function as Article mutator.
+type ArticleFunc func(context.Context, *ent.ArticleMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f HelloFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.HelloMutation); ok {
+func (f ArticleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ArticleMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.HelloMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ArticleMutation", m)
 }
 
 // The YmirFunc type is an adapter to allow the use of ordinary

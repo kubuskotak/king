@@ -8,11 +8,11 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/kubuskotak/king/pkg/persist/crud/ent/hello"
+	"github.com/kubuskotak/king/pkg/persist/crud/ent/article"
 )
 
-// Hello is the model entity for the Hello schema.
-type Hello struct {
+// Article is the model entity for the Article schema.
+type Article struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
@@ -30,13 +30,13 @@ type Hello struct {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Hello) scanValues(columns []string) ([]any, error) {
+func (*Article) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case hello.FieldID, hello.FieldUserID:
+		case article.FieldID, article.FieldUserID:
 			values[i] = new(sql.NullInt64)
-		case hello.FieldTitle, hello.FieldBody, hello.FieldDescription, hello.FieldSlug:
+		case article.FieldTitle, article.FieldBody, article.FieldDescription, article.FieldSlug:
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -46,102 +46,102 @@ func (*Hello) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Hello fields.
-func (h *Hello) assignValues(columns []string, values []any) error {
+// to the Article fields.
+func (a *Article) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case hello.FieldID:
+		case article.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			h.ID = int(value.Int64)
-		case hello.FieldTitle:
+			a.ID = int(value.Int64)
+		case article.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field title", values[i])
 			} else if value.Valid {
-				h.Title = value.String
+				a.Title = value.String
 			}
-		case hello.FieldBody:
+		case article.FieldBody:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field body", values[i])
 			} else if value.Valid {
-				h.Body = value.String
+				a.Body = value.String
 			}
-		case hello.FieldDescription:
+		case article.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				h.Description = value.String
+				a.Description = value.String
 			}
-		case hello.FieldSlug:
+		case article.FieldSlug:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field slug", values[i])
 			} else if value.Valid {
-				h.Slug = value.String
+				a.Slug = value.String
 			}
-		case hello.FieldUserID:
+		case article.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				h.UserID = int(value.Int64)
+				a.UserID = int(value.Int64)
 			}
 		default:
-			h.selectValues.Set(columns[i], values[i])
+			a.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Hello.
+// Value returns the ent.Value that was dynamically selected and assigned to the Article.
 // This includes values selected through modifiers, order, etc.
-func (h *Hello) Value(name string) (ent.Value, error) {
-	return h.selectValues.Get(name)
+func (a *Article) Value(name string) (ent.Value, error) {
+	return a.selectValues.Get(name)
 }
 
-// Update returns a builder for updating this Hello.
-// Note that you need to call Hello.Unwrap() before calling this method if this Hello
+// Update returns a builder for updating this Article.
+// Note that you need to call Article.Unwrap() before calling this method if this Article
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (h *Hello) Update() *HelloUpdateOne {
-	return NewHelloClient(h.config).UpdateOne(h)
+func (a *Article) Update() *ArticleUpdateOne {
+	return NewArticleClient(a.config).UpdateOne(a)
 }
 
-// Unwrap unwraps the Hello entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the Article entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (h *Hello) Unwrap() *Hello {
-	_tx, ok := h.config.driver.(*txDriver)
+func (a *Article) Unwrap() *Article {
+	_tx, ok := a.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Hello is not a transactional entity")
+		panic("ent: Article is not a transactional entity")
 	}
-	h.config.driver = _tx.drv
-	return h
+	a.config.driver = _tx.drv
+	return a
 }
 
 // String implements the fmt.Stringer.
-func (h *Hello) String() string {
+func (a *Article) String() string {
 	var builder strings.Builder
-	builder.WriteString("Hello(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", h.ID))
+	builder.WriteString("Article(")
+	builder.WriteString(fmt.Sprintf("id=%v, ", a.ID))
 	builder.WriteString("title=")
-	builder.WriteString(h.Title)
+	builder.WriteString(a.Title)
 	builder.WriteString(", ")
 	builder.WriteString("body=")
-	builder.WriteString(h.Body)
+	builder.WriteString(a.Body)
 	builder.WriteString(", ")
 	builder.WriteString("description=")
-	builder.WriteString(h.Description)
+	builder.WriteString(a.Description)
 	builder.WriteString(", ")
 	builder.WriteString("slug=")
-	builder.WriteString(h.Slug)
+	builder.WriteString(a.Slug)
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
-	builder.WriteString(fmt.Sprintf("%v", h.UserID))
+	builder.WriteString(fmt.Sprintf("%v", a.UserID))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// Hellos is a parsable slice of Hello.
-type Hellos []*Hello
+// Articles is a parsable slice of Article.
+type Articles []*Article

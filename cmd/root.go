@@ -109,8 +109,6 @@ func (r *rootOptions) runServer(_ *cobra.Command, _ []string) error {
 	 */
 	adaptor := &adapters.Adapter{}
 	adaptor.Sync(
-		adapters.WithHelloSQLite(&adapters.HelloSQLite{
-			File: infrastructure.Envs.HelloSQLite.File}),
 		adapters.WithCrudSQLite(&adapters.CrudSQLite{
 			File: infrastructure.Envs.CrudSQLite.File}),
 	) // adapters init
@@ -123,15 +121,15 @@ func (r *rootOptions) runServer(_ *cobra.Command, _ []string) error {
 	)
 	h.Handler(rest.Routes().Register(
 		func(c chi.Router) http.Handler {
-			// http register handler
-			helloHandler := rest.Hello{
-				Database: crud.Driver(crud.WithDriver(adaptor.CrudSQLite, dialect.SQLite)),
-			}
-			helloHandler.Register(c)
+			rest.NewArticle(
+				rest.WithArticleDatabase(
+					crud.Driver(crud.WithDriver(adaptor.CrudSQLite, dialect.SQLite)),
+				),
+			).Register(c)
 			c.Mount("/api", c)
 			return c
 		},
-	))
+	)) // http register handler
 	if err := h.ListenAndServe(); err != nil {
 		return err
 	}

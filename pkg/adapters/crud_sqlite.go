@@ -3,6 +3,7 @@
 package adapters
 
 import (
+	"database/sql"
 	"fmt"
 
 	"entgo.io/ent/dialect"
@@ -11,7 +12,7 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-var CrudSQLiteOpen = sqlEnt.Open // CrudSQLiteOpen will invoke to test case.
+var CrudSQLiteOpen = sqlEnt.OpenDB // CrudSQLiteOpen will invoke to test case.
 
 // CrudSQLite is data of instances.
 type CrudSQLite struct {
@@ -29,12 +30,13 @@ func (c *CrudSQLite) Open() (*sqlEnt.Driver, error) {
 
 // Connect is connected the connection of sqlite.
 func (c *CrudSQLite) Connect() (err error) {
-	c.driver, err = CrudSQLiteOpen(dialect.SQLite,
-		c.File)
+	var db *sql.DB
+	db, err = sql.Open("sqlite", c.File)
 	if err != nil {
-		log.Error().Err(err).Msg("CrudSQLiteOpen is failed to open")
+		log.Error().Err(err).Msg("sql db is failed to open")
 		return err
 	}
+	c.driver = CrudSQLiteOpen(dialect.SQLite, db)
 	pool := c.driver.DB()
 	pool.SetMaxOpenConns(1)
 

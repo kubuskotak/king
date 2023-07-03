@@ -3,7 +3,7 @@
 package ent
 
 import (
-	"github.com/kubuskotak/king/pkg/persist/crud/ent/hello"
+	"github.com/kubuskotak/king/pkg/persist/crud/ent/article"
 	"github.com/kubuskotak/king/pkg/persist/crud/ent/ymir"
 	"github.com/kubuskotak/king/pkg/persist/crud/schema"
 )
@@ -12,30 +12,30 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	helloFields := schema.Hello{}.Fields()
-	_ = helloFields
-	// helloDescTitle is the schema descriptor for title field.
-	helloDescTitle := helloFields[0].Descriptor()
-	// hello.DefaultTitle holds the default value on creation for the title field.
-	hello.DefaultTitle = helloDescTitle.Default.(string)
-	// hello.TitleValidator is a validator for the "title" field. It is called by the builders before save.
-	hello.TitleValidator = helloDescTitle.Validators[0].(func(string) error)
-	// helloDescBody is the schema descriptor for body field.
-	helloDescBody := helloFields[1].Descriptor()
-	// hello.DefaultBody holds the default value on creation for the body field.
-	hello.DefaultBody = helloDescBody.Default.(string)
-	// hello.BodyValidator is a validator for the "body" field. It is called by the builders before save.
-	hello.BodyValidator = helloDescBody.Validators[0].(func(string) error)
-	// helloDescDescription is the schema descriptor for description field.
-	helloDescDescription := helloFields[2].Descriptor()
-	// hello.DefaultDescription holds the default value on creation for the description field.
-	hello.DefaultDescription = helloDescDescription.Default.(string)
-	// hello.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
-	hello.DescriptionValidator = helloDescDescription.Validators[0].(func(string) error)
-	// helloDescSlug is the schema descriptor for slug field.
-	helloDescSlug := helloFields[3].Descriptor()
-	// hello.SlugValidator is a validator for the "slug" field. It is called by the builders before save.
-	hello.SlugValidator = helloDescSlug.Validators[0].(func(string) error)
+	articleFields := schema.Article{}.Fields()
+	_ = articleFields
+	// articleDescTitle is the schema descriptor for title field.
+	articleDescTitle := articleFields[0].Descriptor()
+	// article.DefaultTitle holds the default value on creation for the title field.
+	article.DefaultTitle = articleDescTitle.Default.(string)
+	// article.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	article.TitleValidator = articleDescTitle.Validators[0].(func(string) error)
+	// articleDescBody is the schema descriptor for body field.
+	articleDescBody := articleFields[1].Descriptor()
+	// article.DefaultBody holds the default value on creation for the body field.
+	article.DefaultBody = articleDescBody.Default.(string)
+	// article.BodyValidator is a validator for the "body" field. It is called by the builders before save.
+	article.BodyValidator = articleDescBody.Validators[0].(func(string) error)
+	// articleDescDescription is the schema descriptor for description field.
+	articleDescDescription := articleFields[2].Descriptor()
+	// article.DefaultDescription holds the default value on creation for the description field.
+	article.DefaultDescription = articleDescDescription.Default.(string)
+	// article.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	article.DescriptionValidator = articleDescDescription.Validators[0].(func(string) error)
+	// articleDescSlug is the schema descriptor for slug field.
+	articleDescSlug := articleFields[3].Descriptor()
+	// article.SlugValidator is a validator for the "slug" field. It is called by the builders before save.
+	article.SlugValidator = articleDescSlug.Validators[0].(func(string) error)
 	ymirFields := schema.Ymir{}.Fields()
 	_ = ymirFields
 	// ymirDescVersion is the schema descriptor for version field.

@@ -30,7 +30,7 @@ func (r *Router) Register(fn RegisterFunc) http.Handler {
 		infrastructure.Envs.App.ServiceName,
 		version.GetVersion().VersionNumber(),
 	))
-	r.h.NotFound(pkgRest.HandlerAdapter(pkgRest.NotFoundDefault).JSON) // Not Found Handler
+	r.h.NotFound(pkgRest.NotFoundDefault()) // Not Found Handler
 	return fn(r.h)
 }
 

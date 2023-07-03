@@ -3,14 +3,12 @@
 package adapters
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	"strings"
 
 	sqlEnt "entgo.io/ent/dialect/sql"
 	"github.com/go-resty/resty/v2"
-	"github.com/kubuskotak/asgard/driver"
 	"github.com/rs/zerolog/log"
 
 	"github.com/kubuskotak/king/pkg/persist/crud"
@@ -29,9 +27,8 @@ type Driver[T client] interface {
 
 // Adapter components for external sources.
 type Adapter struct {
-	HelloSQLite *sqlEnt.Driver
-	CrudPersist *crud.Database
 	CrudSQLite  *sqlEnt.Driver
+	CrudPersist *crud.Database
 }
 
 // Option is Adapter type return func.
@@ -54,20 +51,10 @@ func (a *Adapter) UnSync() error {
 			errs = append(errs, err.Error())
 		}
 	}
-	if a.HelloSQLite != nil {
-		log.Info().Msg("HelloSQLite is closed")
-		if err := a.HelloSQLite.Close(); err != nil {
-			errs = append(errs, err.Error())
-		}
-	}
 	if len(errs) > 0 {
 		err := fmt.Errorf(strings.Join(errs, "\n"))
 		log.Error().Err(err).Msg("UnSync adapter error")
 		return err
 	}
 	return nil
-}
-
-func init() {
-	sql.Register("sqlite3", driver.Sqlite())
 }

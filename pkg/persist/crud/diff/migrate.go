@@ -10,6 +10,7 @@ import (
 
 	atlas "ariga.io/atlas/sql/migrate"
 	"entgo.io/ent/dialect/sql/schema"
+	_ "github.com/kubuskotak/asgard/sqlite"
 	"github.com/rs/zerolog/log"
 
 	"github.com/kubuskotak/king/pkg/persist/crud/ent/migrate"
