@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"entgo.io/ent/dialect"
 	"github.com/go-chi/chi/v5"
 	"github.com/kubuskotak/asgard/common"
 	pkgInf "github.com/kubuskotak/asgard/infrastructure"
@@ -22,7 +21,6 @@ import (
 	"github.com/kubuskotak/king/pkg/adapters"
 	"github.com/kubuskotak/king/pkg/api/rest"
 	"github.com/kubuskotak/king/pkg/infrastructure"
-	"github.com/kubuskotak/king/pkg/persist/crud"
 	"github.com/kubuskotak/king/pkg/version"
 )
 
@@ -122,9 +120,7 @@ func (r *rootOptions) runServer(_ *cobra.Command, _ []string) error {
 	h.Handler(rest.Routes().Register(
 		func(c chi.Router) http.Handler {
 			rest.NewArticle(
-				rest.WithArticleDatabase(
-					crud.Driver(crud.WithDriver(adaptor.CrudSQLite, dialect.SQLite)),
-				),
+				rest.WithArticleDatabase(adaptor.CrudSQLite),
 			).Register(c)
 			c.Mount("/api", c)
 			return c

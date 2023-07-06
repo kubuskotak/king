@@ -17,15 +17,15 @@ var CrudSQLiteOpen = sqlEnt.OpenDB // CrudSQLiteOpen will invoke to test case.
 // CrudSQLite is data of instances.
 type CrudSQLite struct {
 	File   string `json:"file"`
-	driver *sqlEnt.Driver
+	Client *sqlEnt.Driver
 }
 
 // Open is open the connection of sqlite.
 func (c *CrudSQLite) Open() (*sqlEnt.Driver, error) {
-	if c.driver == nil {
+	if c.Client == nil {
 		return nil, fmt.Errorf("driver was failed to connected")
 	}
-	return c.driver, nil
+	return c.Client, nil
 }
 
 // Connect is connected the connection of sqlite.
@@ -36,8 +36,8 @@ func (c *CrudSQLite) Connect() (err error) {
 		log.Error().Err(err).Msg("sql db is failed to open")
 		return err
 	}
-	c.driver = CrudSQLiteOpen(dialect.SQLite, db)
-	pool := c.driver.DB()
+	c.Client = CrudSQLiteOpen(dialect.SQLite, db)
+	pool := c.Client.DB()
 	pool.SetMaxOpenConns(1)
 
 	return nil
@@ -45,7 +45,7 @@ func (c *CrudSQLite) Connect() (err error) {
 
 // Disconnect is disconnect the connection of sqlite.
 func (c *CrudSQLite) Disconnect() error {
-	return c.driver.Close()
+	return c.Client.Close()
 }
 
 // WithCrudSQLite option function to assign on adapters.
@@ -58,6 +58,9 @@ func WithCrudSQLite(driver Driver[*sqlEnt.Driver]) Option {
 		if err != nil {
 			panic(err)
 		}
-		a.CrudSQLite = open
+		if err := open.DB().Ping(); err != nil {
+			panic(err)
+		}
+		a.CrudSQLite = driver.(*CrudSQLite)
 	}
 }

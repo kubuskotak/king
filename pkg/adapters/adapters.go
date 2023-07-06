@@ -27,7 +27,7 @@ type Driver[T client] interface {
 
 // Adapter components for external sources.
 type Adapter struct {
-	CrudSQLite  *sqlEnt.Driver
+	CrudSQLite  *CrudSQLite
 	CrudPersist *crud.Database
 }
 
@@ -47,7 +47,7 @@ func (a *Adapter) UnSync() error {
 	var errs []string
 	if a.CrudSQLite != nil {
 		log.Info().Msg("CrudSQLite is closed")
-		if err := a.CrudSQLite.Close(); err != nil {
+		if err := a.CrudSQLite.Disconnect(); err != nil {
 			errs = append(errs, err.Error())
 		}
 	}

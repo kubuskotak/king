@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"net/http"
 
+	"entgo.io/ent/dialect"
 	"github.com/go-chi/chi/v5"
 	"github.com/jinzhu/copier"
 	pkgRest "github.com/kubuskotak/asgard/rest"
 	pkgTracer "github.com/kubuskotak/asgard/tracer"
 
+	"github.com/kubuskotak/king/pkg/adapters"
 	"github.com/kubuskotak/king/pkg/entity"
 	"github.com/kubuskotak/king/pkg/persist/crud"
 	"github.com/kubuskotak/king/pkg/persist/crud/ent"
@@ -26,9 +28,9 @@ type Article struct {
 }
 
 // WithArticleDatabase option function to assign on article.
-func WithArticleDatabase(db *crud.Database) ArticleOption {
+func WithArticleDatabase(adapter *adapters.CrudSQLite) ArticleOption {
 	return func(a *Article) {
-		a.Database = db
+		a.Database = crud.Driver(crud.WithDriver(adapter.Client, dialect.SQLite))
 	}
 }
 
