@@ -16,7 +16,7 @@
 /.vscode/
 .idea/
 .env
-bin/
+/bin
 dist/
 
 .DS_Store

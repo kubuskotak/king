@@ -27,8 +27,9 @@ type Driver[T client] interface {
 
 // Adapter components for external sources.
 type Adapter struct {
-	CrudSQLite  *CrudSQLite
-	CrudPersist *crud.Database
+	CrudSQLite   *CrudSQLite
+	CrudPersist  *crud.Database
+	PokemonResty *resty.Client
 }
 
 // Option is Adapter type return func.

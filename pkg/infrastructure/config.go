@@ -39,6 +39,9 @@ type Config struct {
 	CrudSQLite struct {
 		File string `yaml:"file" env:"CRUD_SQLITE_FILE" env-description:"database file"`
 	} `yaml:"CrudSQLite"`
+	PokemonResty struct {
+		URL string `yaml:"URL" env:"POKEMON_RESTY_URL" env-description:"api url"`
+	} `yaml:"PokemonResty"`
 }
 
 var (

@@ -21,6 +21,8 @@ import (
 	"github.com/kubuskotak/king/pkg/adapters"
 	"github.com/kubuskotak/king/pkg/api/rest"
 	"github.com/kubuskotak/king/pkg/infrastructure"
+	"github.com/kubuskotak/king/pkg/usecase"
+	"github.com/kubuskotak/king/pkg/usecase/pokemon"
 	"github.com/kubuskotak/king/pkg/version"
 )
 
@@ -104,21 +106,52 @@ func (r *rootOptions) runServer(_ *cobra.Command, _ []string) error {
 	}
 	/**
 	* Initialize Main
+	*
+	* adaptor.Sync(
+	* 	 adapters.WithCrudSQLite(&adapters.CrudSQLite{
+	*	 	 File: infrastructure.Envs.CrudSQLite.File}),
+	*	 adapters.WithPokemonResty(&adapters.PokemonResty{
+	*		 URL: infrastructure.Envs.PokemonResty.URL}),
+	* )
 	 */
 	adaptor := &adapters.Adapter{}
 	adaptor.Sync(
 		adapters.WithCrudSQLite(&adapters.CrudSQLite{
 			File: infrastructure.Envs.CrudSQLite.File}),
+		adapters.WithPokemonResty(&adapters.PokemonResty{
+			URL: infrastructure.Envs.PokemonResty.URL}),
 	) // adapters init
+	/**
+	* Initialize UseCase
+	* pokemonCase, err := usecase.Get[pokemon.T](adaptor)
+	* if err != nil {
+	*	 return err
+	* }
+	 */
+	pokemonCase, err := usecase.Get[pokemon.T](adaptor)
+	if err != nil {
+		return err
+	}
 	var errCh chan error
 	/**
 	* Initialize HTTP
+	*
+	* func(c chi.Router) http.Handler {
+	* 	rest.NewPokemon(
+	*  	  	rest.WithPokemonUseCase(pokemonCase),
+	* 	).Register(c)
+	* 	c.Mount("/api", c)
+	*	return c
+	* }
 	 */
 	h := pkgRest.NewServer(
 		pkgRest.WithPort(strconv.Itoa(infrastructure.Envs.Ports.HTTP)),
 	)
 	h.Handler(rest.Routes().Register(
 		func(c chi.Router) http.Handler {
+			rest.NewPokemon(
+				rest.WithPokemonUseCase(pokemonCase),
+			).Register(c)
 			rest.NewArticle(
 				rest.WithArticleDatabase(adaptor.CrudSQLite),
 			).Register(c)
