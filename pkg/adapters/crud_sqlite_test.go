@@ -38,7 +38,7 @@ func TestWithCrudSQLite(t *testing.T) {
 	adapter := &Adapter{}
 	adapter.Sync(
 		WithCrudSQLite(&CrudSQLite{
-			File: infrastructure.Envs.CrudSQLite.File,
+			File: "file:ent?mode=memory&_pragma=foreign_keys(1)",
 		}),
 	)
 

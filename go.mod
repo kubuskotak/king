@@ -10,7 +10,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.0
 	github.com/jinzhu/copier v0.3.5
-	github.com/kubuskotak/asgard v0.0.0-20230626084609-98879813b02f
+	github.com/kubuskotak/asgard v0.0.0-20230720191742-24255591d600
 	github.com/rs/zerolog v1.29.1
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4

@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+  svc:
+    build: .
+    ports:
+      - "8007:8007"
+    volumes:
+      - .data:/.data
+    env_file:
+      - .env
